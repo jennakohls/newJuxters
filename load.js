@@ -19,10 +19,11 @@ let app = new Application({
   }
 );
 
+scaleToWindow(app.renderer.view);
 //auto-resize function from here: https://github.com/kittykatattack/scaleToWindow
       //basically keeps things centered and sized nice. i have not tested this extensively :) 
       window.addEventListener("resize", function(event){ 
-          var scale = scaleToWindow(app.renderer.view);
+        scale = scaleToWindow(app.renderer.view);
       });
 
 
@@ -41,6 +42,9 @@ let boardSize = 8; //square
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
 let tileSize = 64;
+
+let movedTileX = 0;
+let movedTileY = 0;
 //This `setup` function will run when the image has loaded
 function setup() { 
     
@@ -56,7 +60,7 @@ function setup() {
     
     //make pile
     for(let i = 0; i < pileSize; i++){
-        let tileName = letters[Math.round(Math.random() * (letters.length - 1))];
+        let tileName = letters[Math.round(Math.random() * (letters.length - 2))];
         let newPos = roundPosition((i * tileSize) + tileSize/2,tileSize/2);
         let newTile = createTile(tileName,newPos[0],newPos[1],true); 
         pile.addChild(newTile);
@@ -122,6 +126,8 @@ function onDragStart(event)
     this.data = event.data;
     this.alpha = 0.5;
     this.dragging = true;
+    movedTileX = this.x;
+    movedTileY = this.y;
 }
 
 function onDragEnd()
@@ -133,7 +139,7 @@ function onDragEnd()
     // set the interaction data to null
     this.data = null;
     
-    createPileTile(this.x,this.y);
+    createPileTile(movedTileX,movedTileY);
 }
 
 function onDragMove()
