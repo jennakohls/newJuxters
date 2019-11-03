@@ -42,7 +42,7 @@ loader
 //let a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,blank;
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank'];
 let pileSize = 4;
-let boardSize = 8; //square
+let boardSize = 8; //square but it gets cut off! :D
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
 let tileSize = 64;
@@ -143,7 +143,12 @@ function onDragEnd()
     // set the interaction data to null
     this.data = null;
     
-    createPileTile(movedTileX,movedTileY);
+    if(validMove(this)){
+       createPileTile(movedTileX,movedTileY);
+    }
+    else {
+        this.position.set(movedTileX,movedTileY);
+    }
 }
 
 function onDragMove()
@@ -161,14 +166,21 @@ function roundPosition(x,y){
     let amt = 64;
     let roundedX = Math.round(x/amt)*amt;
     let roundedY = Math.round(y/amt)*amt;
-    if(app.view.width - roundedX <= amt) {
-        roundedX -= amt;
-    }
-    if(app.view.height - roundedY <= amt) {
-        roundedY -= amt;
-    }
+//    if(app.view.width - roundedX <= amt) {
+//        roundedX -= amt;
+//    }
+//    if(app.view.height - roundedY <= amt) {
+//        roundedY -= amt;
+//    }
     return [roundedX, roundedY];
 }
-function boxesCollide(a,b){
+function boxesCollide(ab,bb){
     return ab.x + ab.width > bb.x && ab.x < bb.x + bb.width && ab.y + ab.height > bb.y && ab.y < bb.y + bb.height;
+}
+
+function validMove(a){ //um okay don't look too hard at this. for some reason it's backwards what i thought. idk. 
+    for(const element of board.children){
+        if(boxesCollide(a,element)) return false;
+    }
+    return true;
 }
