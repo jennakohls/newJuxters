@@ -27,4 +27,4 @@ Front-End Next Steps:
 - better layout, to allow more than 4 letters in the pile lol
 
 
-Oh I also used TexturePacker to create the sprite sheet. @Ravi, that might be a good thing to look at. But it's really simple, especially with only the free version.
+Oh I also used TexturePacker to create the sprite sheet. @Raju, that might be a good thing to look at. But it's really simple, especially with only the free version.
