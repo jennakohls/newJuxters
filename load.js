@@ -106,9 +106,7 @@ function createTile(name,x,y,interactable){
     // move the sprite to its designated position
     tile.position.x = x;
     tile.position.y = y;
-    
-    //app.stage.addChild(tile);
-    
+
     return tile;
 }
 
