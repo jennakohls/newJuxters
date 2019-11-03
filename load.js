@@ -19,9 +19,13 @@ let app = new Application({
   }
 );
 
-scaleToWindow(app.renderer.view);
+//scaleToWindow(app.renderer.view,"#2C3539");
 //auto-resize function from here: https://github.com/kittykatattack/scaleToWindow
-      //basically keeps things centered and sized nice. i have not tested this extensively :) 
+      //basically keeps things centered and sized nice. i have not tested this extensively :)
+
+window.addEventListener("load", function(event){ 
+        scale = scaleToWindow(app.renderer.view);
+});
       window.addEventListener("resize", function(event){ 
         scale = scaleToWindow(app.renderer.view);
       });
