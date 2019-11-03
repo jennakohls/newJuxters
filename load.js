@@ -145,6 +145,7 @@ function onDragEnd()
     
     if(validMove(this)){
        createPileTile(movedTileX,movedTileY);
+        this.interactive = false;
     }
     else {
         this.position.set(movedTileX,movedTileY);
