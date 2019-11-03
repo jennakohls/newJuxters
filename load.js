@@ -163,7 +163,7 @@ function onDragMove()
 
 function roundPosition(x,y){
     //lol this doesn't work quite yet but... one day. it rounds, just doesn't bounce off the edge like i'd like
-    let amt = 64;
+    let amt = tileSize;
     let roundedX = Math.round(x/amt)*amt;
     let roundedY = Math.round(y/amt)*amt;
 //    if(app.view.width - roundedX <= amt) {
