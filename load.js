@@ -48,16 +48,17 @@ function setup() {
     for(let i = 0; i < boardSize; i++){
         for(let j = 0; j < boardSize; j++){
             let tileName = "_blank";
-            let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2);
+            let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2,false);
             board.addChild(newTile);
         }
     }
     app.stage.addChild(board);
+    
     //make pile
     for(let i = 0; i < pileSize; i++){
         let tileName = letters[Math.round(Math.random() * (letters.length - 1))];
         let newPos = roundPosition((i * tileSize) + tileSize/2,tileSize/2);
-        let newTile = createTile(tileName,newPos[0],newPos[1]); 
+        let newTile = createTile(tileName,newPos[0],newPos[1],true); 
         pile.addChild(newTile);
     }
     
@@ -67,11 +68,18 @@ function setup() {
     
 }
 
-function createTile(name,x,y){
+function createPileTile(x,y){
+    let tileName = letters[Math.round(Math.random() * (letters.length - 1))];
+    let newPos = roundPosition(x,y);
+    let newTile = createTile(tileName,newPos[0],newPos[1],true); 
+    pile.addChild(newTile);
+}
+
+function createTile(name,x,y,interactable){
     let path = name + ".png"
     let tile = new Sprite(TextureCache[path]);
     
-    tile.interactive = true;
+    tile.interactive = interactable;
     tile.buttonMode = true;
     tile.anchor.set(0.5);
     
@@ -124,6 +132,8 @@ function onDragEnd()
 
     // set the interaction data to null
     this.data = null;
+    
+    createPileTile(this.x,this.y);
 }
 
 function onDragMove()
