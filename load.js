@@ -52,11 +52,13 @@ let movedTileY = 0;
 //This `setup` function will run when the image has loaded
 function setup() { 
     
+
+    
     //make board
     for(let i = 0; i < boardSize; i++){
         for(let j = 0; j < boardSize; j++){
             let tileName = "_blank";
-            let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2,false);
+            let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2 + tileSize,false);
             board.addChild(newTile);
         }
     }
@@ -70,9 +72,27 @@ function setup() {
         pile.addChild(newTile);
     }
     
-    pile.position.set(tileSize/2, (tileSize/2) * 17);
+    pile.position.set(tileSize/2, (tileSize/2) * 19);
     app.stage.addChild(pile);
     
+    //make score
+    drawScore();
+    
+}
+
+function drawScore(){
+    
+let style = new PIXI.TextStyle({
+  fontFamily: "BlinkMacSystemFont", //this probably won't work on mobile. 
+  fontSize: 24,
+  fill: "white",
+});
+    
+    let message = new PIXI.Text("Score: 0",style);
+
+    message.position.set((app.view.width/2) - 48, 24);
+    
+    app.stage.addChild(message);
     
 }
 
