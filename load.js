@@ -110,6 +110,8 @@ function createTile(name,x,y,interactable){
     tile.interactive = interactable;
     tile.buttonMode = true;
     tile.anchor.set(0.5);
+
+    tile.tileName = name;
     
     tile // events for drag start
     .on('mousedown', onDragStart)
@@ -162,8 +164,10 @@ function onDragEnd()
     this.data = null;
     
     if(validMove(this)){
-       createPileTile(movedTileX,movedTileY);
+        createPileTile(movedTileX,movedTileY);
         this.interactive = false;
+        console.log(this);
+        console.log(this.tileName);
     }
     else {
         this.position.set(movedTileX,movedTileY);
@@ -193,11 +197,16 @@ function roundPosition(x,y){
 //    }
     return [roundedX, roundedY];
 }
-function boxesCollide(ab,bb){
-    return ab.x + ab.width > bb.x && ab.x < bb.x + bb.width && ab.y + ab.height > bb.y && ab.y < bb.y + bb.height;
+function boxesCollide(a,b){
+    return a.x + a.width > b.x && a.x < b.x + b.width && a.y + a.height > b.y && a.y < b.y + b.height;
+}
+function outOfBounds(a){
+    return ((a.x < 0 || a.x > 320) || //these are the max and min x values for the board (0 is the visual left, 320 is the visual right) 
+        (a.y > -64 || a.y < -512)); //these are the max and min y values for the board (-512 is the visual top of the board, -64 is the visual bottom)
 }
 
 function validMove(a){ //um okay don't look too hard at this. for some reason it's backwards what i thought. idk. 
+    if (outOfBounds(a)) return false;
     for(const element of board.children){
         if(boxesCollide(a,element)) return false;
     }
