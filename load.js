@@ -15,7 +15,8 @@ let app = new Application({
     height: 700,        // default: 600
     antialias: true,    // default: false
     transparent: false, // default: false
-    resolution: 1       // default: 1
+    resolution: 1,       // default: 1
+    backgroundColor: 0xFF00FF // default: 0x000000
   }
 );
 
@@ -40,12 +41,14 @@ loader
   .load(setup);
 
 //let a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,blank;
-let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank'];
+let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
 let pileSize = 4;
 let boardSize = 8; //square but it gets cut off! :D
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
 let tileSize = 64;
+let score = 0;
+let tileChance = .8;
 
 let movedTileX = 0;
 let movedTileY = 0;
@@ -57,7 +60,10 @@ function setup() {
     //make board
     for(let i = 0; i < boardSize; i++){
         for(let j = 0; j < boardSize; j++){
-            let tileName = "_blank";
+            let tileName = "_blank"
+            if (Math.random() > tileChance) {
+                tileName = "_wall";
+            } 
             let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2 + tileSize,false);
             board.addChild(newTile);
         }
@@ -81,14 +87,19 @@ function setup() {
 }
 
 function drawScore(){
-    
+var graphics = new PIXI.Graphics();
+graphics.beginFill(0x000000);
+graphics.lineStyle(5, 0x000000);
+graphics.drawRect(0,0,300,200);
+app.stage.addChild(graphics);
+
 let style = new PIXI.TextStyle({
   fontFamily: "BlinkMacSystemFont", //this probably won't work on mobile. 
   fontSize: 24,
   fill: "white",
 });
     
-    let message = new PIXI.Text("Score: 0",style);
+    let message = new PIXI.Text("Score: " + score.toString(), style);
 
     message.position.set((app.view.width/2) - 48, 24);
     
@@ -172,6 +183,9 @@ function onDragEnd()
     else {
         this.position.set(movedTileX,movedTileY);
     }
+    //This should increase and update score
+    incrementScore(this);
+    drawScore();
 }
 
 function onDragMove()
@@ -182,6 +196,10 @@ function onDragMove()
         let newRounded = roundPosition(newPosition.x,newPosition.y);
         this.position.set(newRounded[0],newRounded[1]);
     }
+}
+
+function incrementScore(a){//should be a more particular score determination based upon words made in the future
+    score += letters.indexOf(a.tileName);
 }
 
 function roundPosition(x,y){
@@ -206,6 +224,8 @@ function outOfBounds(a){
 }
 
 function validMove(a){ //um okay don't look too hard at this. for some reason it's backwards what i thought. idk. 
+    console.log(a.y);
+    console.log(a.x);
     if (outOfBounds(a)) return false;
     for(const element of board.children){
         if(boxesCollide(a,element)) return false;
