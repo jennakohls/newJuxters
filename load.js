@@ -42,11 +42,11 @@ loader
 
 //let a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,blank;
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
-let pileSize = 4;
+let pileSize = 6;
 let boardSize = 8; //square but it gets cut off! :D
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
-let tileSize = 64;
+let tileSize = 48;
 let score = 0;
 let tileChance = .8;
 
@@ -61,11 +61,15 @@ function setup() {
     for(let i = 0; i < boardSize; i++){
         for(let j = 0; j < boardSize; j++){
             let tileName = "_blank"
+            //Random wall placement
             if (Math.random() > tileChance) {
                 tileName = "_wall";
             } 
             let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2 + tileSize,false);
             board.addChild(newTile);
+            console.log("Initial Tile: ");
+            console.log(newTile.x);
+            console.log(newTile.y);
         }
     }
     app.stage.addChild(board);
@@ -77,8 +81,8 @@ function setup() {
         let newTile = createTile(tileName,newPos[0],newPos[1],true); 
         pile.addChild(newTile);
     }
-    
     pile.position.set(tileSize/2, (tileSize/2) * 19);
+    //pile.position.set(tileSize/2 + tileSize, (tileSize/2) * 19);
     app.stage.addChild(pile);
     
     //make score
@@ -89,8 +93,8 @@ function setup() {
 function drawScore(){
 var graphics = new PIXI.Graphics();
 graphics.beginFill(0x000000);
-graphics.lineStyle(5, 0x000000);
-graphics.drawRect(0,0,300,200);
+graphics.lineStyle(5, 0xFF00FF);
+graphics.drawRect(0,0,8 * tileSize,tileSize);
 app.stage.addChild(graphics);
 
 let style = new PIXI.TextStyle({
@@ -117,7 +121,9 @@ function createPileTile(x,y){
 function createTile(name,x,y,interactable){
     let path = name + ".png"
     let tile = new Sprite(TextureCache[path]);
-    
+    tile.height = tileSize
+    tile.width = tileSize
+
     tile.interactive = interactable;
     tile.buttonMode = true;
     tile.anchor.set(0.5);
@@ -177,8 +183,9 @@ function onDragEnd()
     if(validMove(this)){
         createPileTile(movedTileX,movedTileY);
         this.interactive = false;
-        console.log(this);
-        console.log(this.tileName);
+        console.log("Moved Tile: ");
+        console.log(this.x);
+        console.log(this.y);
     }
     else {
         this.position.set(movedTileX,movedTileY);
@@ -224,8 +231,6 @@ function outOfBounds(a){
 }
 
 function validMove(a){ //um okay don't look too hard at this. for some reason it's backwards what i thought. idk. 
-    console.log(a.y);
-    console.log(a.x);
     if (outOfBounds(a)) return false;
     for(const element of board.children){
         if(boxesCollide(a,element)) return false;
