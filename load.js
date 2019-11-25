@@ -53,6 +53,7 @@ PIXI.sound.play('full',{
     autoPlay: true,
     loop: true
 })
+
 //load an image and run the `setup` function when it's done
 loader
   .add("rss/tileset.json")
@@ -60,6 +61,8 @@ loader
 
 //let a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,blank;
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
+let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0]
+let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0]
 let pileSize = 5;
 let boardSize = 7; //square but it gets cut off! :D
 let pile = new PIXI.Container();
