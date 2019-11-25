@@ -9,7 +9,7 @@ let Application = PIXI.Application,
       
       
 let app = new Application({ 
-    width: 384,         // default: 800
+    width: 385,         // default: 800
     height: 700,        // default: 600
     antialias: true,    // default: false
     transparent: false, // default: false
@@ -60,11 +60,11 @@ loader
 
 //let a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,blank;
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
-let pileSize = 6;
-let boardSize = 8; //square but it gets cut off! :D
+let pileSize = 5;
+let boardSize = 7; //square but it gets cut off! :D
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
-let tileSize = 48;
+let tileSize = 54;
 let score = 0;
 let tileChance = .8;
 let movedTileX = 0;
@@ -77,7 +77,7 @@ function setup() {
         for(let j = 0; j < boardSize; j++){
             let tileName = "_blank"
             //Random wall placement
-            if (Math.random() > tileChance) {
+            if (i == 1 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || i == boardSize - 2 && j == boardSize - 2 || i == boardSize - 3 && j == boardSize - 2 || i == boardSize - 2 && j == boardSize - 3) {
                 tileName = "_wall";
             } 
             let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2 + tileSize,false);
@@ -199,9 +199,6 @@ function onDragEnd()
     if(validMove(this)){
         createPileTile(movedTileX,movedTileY);
         this.interactive = false;
-        console.log("Moved Tile: ");
-        console.log(this.x);
-        console.log(this.y);
     }
     else {
         this.position.set(movedTileX,movedTileY);
