@@ -49,6 +49,10 @@ for (let name in manifest) {
     PIXI.Loader.shared.add(name, manifest[name]);
 }
 
+PIXI.sound.play('full',{
+    autoPlay: true,
+    loop: true
+})
 //load an image and run the `setup` function when it's done
 loader
   .add("rss/tileset.json")
@@ -183,7 +187,7 @@ function onDragStart(event)
     this.dragging = true;
     movedTileX = this.x;
     movedTileY = this.y;
-    PIXI.sound.play('full');
+    PIXI.sound.play('highNotes');
 }
 
 function onDragEnd()
