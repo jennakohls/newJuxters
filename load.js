@@ -73,7 +73,10 @@ function setup() {
         for(let j = 0; j < boardSize; j++){
             let tileName = "_blank"
             //Random wall placement
-            if (i == 1 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || i == boardSize - 2 && j == boardSize - 2 || i == boardSize - 3 && j == boardSize - 2 || i == boardSize - 2 && j == boardSize - 3) {
+            if (i == 1 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || 
+                i == boardSize - 2 && j == boardSize - 2 || i == boardSize - 3 && j == boardSize - 2 || 
+                i == boardSize - 2 && j == boardSize - 3 || i == boardSize - 2 && j == 1 ||
+                i == 1 && j == boardSize - 2) {
                 tileName = "_wall";
             } 
             let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2 + tileSize,false);
