@@ -29,13 +29,25 @@ window.addEventListener("load", function(event){
 //Add pixi canvas to html document
 document.body.appendChild(app.view);
 
-PIXI.sound.Sound.from({
-    url: 'rss/sound/juxtersBounce2.ogg',
-    autoPlay: true,
-    complete: function() {
-        console.log('Sound finished');
-    }
-});
+//PIXI.sound.Sound.from({
+//    url: 'rss/sound/juxtersBounce2.ogg',
+//    autoPlay: true,
+//    loop: true,
+//    complete: function() {
+//        console.log('Sound finished');
+//    }
+//});
+
+// List of files to load
+const manifest = {
+    full: 'rss/sound/JuxtersBounce2.ogg',
+    highNotes: 'rss/sound/JuxtersBounce1.ogg'
+};
+
+// Add
+for (let name in manifest) {
+    PIXI.Loader.shared.add(name, manifest[name]);
+}
 
 //load an image and run the `setup` function when it's done
 loader
@@ -168,6 +180,7 @@ function onDragStart(event)
     this.dragging = true;
     movedTileX = this.x;
     movedTileY = this.y;
+    PIXI.sound.play('full');
 }
 
 function onDragEnd()
