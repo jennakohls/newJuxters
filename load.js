@@ -1,10 +1,8 @@
-//var interact = 'interactjs';
-
 //Aliases
 let Application = PIXI.Application,
     Container = PIXI.Container,
-    loader = PIXI.loader,
-    resources = PIXI.loader.resources,
+    loader = PIXI.Loader.shared,
+    resources = PIXI.Loader.shared.resources,
     TextureCache = PIXI.utils.TextureCache,
     Sprite = PIXI.Sprite,
     Rectangle = PIXI.Rectangle;
@@ -20,10 +18,7 @@ let app = new Application({
   }
 );
 
-//scaleToWindow(app.renderer.view,"#2C3539");
-//auto-resize function from here: https://github.com/kittykatattack/scaleToWindow
-      //basically keeps things centered and sized nice. i have not tested this extensively :)
-
+//This has been checked and does not cause crashing
 window.addEventListener("load", function(event){ 
         scale = scaleToWindow(app.renderer.view);
 });
@@ -31,10 +26,17 @@ window.addEventListener("load", function(event){
         scale = scaleToWindow(app.renderer.view);
       });
 
-
 //Add pixi canvas to html document
 document.body.appendChild(app.view);
-      
+
+PIXI.sound.Sound.from({
+    url: 'rss/sound/juxtersBounce2.ogg',
+    autoPlay: true,
+    complete: function() {
+        console.log('Sound finished');
+    }
+});
+
 //load an image and run the `setup` function when it's done
 loader
   .add("rss/tileset.json")
@@ -49,14 +51,11 @@ let board = new PIXI.Container();
 let tileSize = 48;
 let score = 0;
 let tileChance = .8;
-
 let movedTileX = 0;
 let movedTileY = 0;
+
 //This `setup` function will run when the image has loaded
 function setup() { 
-    
-
-    
     //make board
     for(let i = 0; i < boardSize; i++){
         for(let j = 0; j < boardSize; j++){
@@ -98,7 +97,7 @@ graphics.drawRect(0,0,8 * tileSize,tileSize);
 app.stage.addChild(graphics);
 
 let style = new PIXI.TextStyle({
-  fontFamily: "BlinkMacSystemFont", //this probably won't work on mobile. 
+  //fontFamily: "BlinkMacSystemFont", //this probably won't work on mobile. 
   fontSize: 24,
   fill: "white",
 });
@@ -108,7 +107,7 @@ let style = new PIXI.TextStyle({
     message.position.set((app.view.width/2) - 48, 24);
     
     app.stage.addChild(message);
-    
+  
 }
 
 function createPileTile(x,y){
