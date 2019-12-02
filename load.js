@@ -95,6 +95,19 @@ function setup() {
             board.addChild(newTile);
         }
     }
+
+    var background = PIXI.Sprite.fromImage('rss/background.png');
+ 
+    // center the sprite anchor point
+    background.anchor.x = 0;
+    background.anchor.y = 0;
+     
+     
+    background.position.x = 0;
+    background.position.y = 0;
+    app.stage.addChild(background);
+
+
     app.stage.addChild(board);
     
     //make pile
