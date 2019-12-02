@@ -57,9 +57,9 @@ let notesArray = ['aNote','bNote','cNote','dNote','eNote','fNote','gNote'];
 let songArray = ['aNote']; //take that out, i just want to make sure it's initialized
 
 // Add
-//for (let name in manifest) {
-//    PIXI.Loader.shared.add(name, manifest[name]);
-//}
+for (let name in manifest) {
+    PIXI.Loader.shared.add(name, manifest[name]);
+}
 
 //PIXI.sound.play('full',{
 //    autoPlay: true,
