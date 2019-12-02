@@ -29,30 +29,30 @@ window.addEventListener("load", function(event){
 //Add pixi canvas to html document
 document.body.appendChild(app.view);
 
-PIXI.sound.Sound.from({
-    url: 'rss/sound/juxtersBounce2.ogg',
-    autoPlay: true,
-    loop: true,
-    complete: function() {
-        console.log('Sound finished');
-    }
-});
+//PIXI.sound.Sound.from({
+//    url: 'rss/sound/juxtersBounce2.ogg',
+//    autoPlay: true,
+//    loop: true,
+//    complete: function() {
+//        console.log('Sound finished');
+//    }
+//});
 
 // List of files to load
-const manifest = {
-    full: 'rss/sound/JuxtersBounce2.ogg',
-    highNotes: 'rss/sound/JuxtersBounce1.ogg'
-};
+//const manifest = {
+//    full: 'rss/sound/JuxtersBounce2.ogg',
+//    highNotes: 'rss/sound/JuxtersBounce1.ogg'
+//};
 
 // Add
 for (let name in manifest) {
     PIXI.Loader.shared.add(name, manifest[name]);
 }
 
-PIXI.sound.play('full',{
-    autoPlay: true,
-    loop: true
-})
+//PIXI.sound.play('full',{
+//    autoPlay: true,
+//    loop: true
+//})
 
 //load an image and run the `setup` function when it's done
 loader
@@ -63,11 +63,13 @@ loader
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
 let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0]
 let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0]
-let pileSize = 5;
-let boardSize = 7; //square but it gets cut off! :D
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
+let pileSize = 5;
+let boardSize = 7; //square but it gets cut off! :D
 let tileSize = 54;
+let leftBorder = tileSize / 2;
+let rightBorder = (boardSize * tileSize) + leftBorder;
 let score = 0;
 let tileChance = .8;
 let movedTileX = 0;
@@ -91,6 +93,8 @@ function setup() {
             console.log("Initial Tile: ");
             console.log(newTile.x);
             console.log(newTile.y);
+            console.log(newTile.getGlobalPosition().x);
+            console.log(newTile.getGlobalPosition().y);
         }
     }
     app.stage.addChild(board);
@@ -190,7 +194,7 @@ function onDragStart(event)
     this.dragging = true;
     movedTileX = this.x;
     movedTileY = this.y;
-    PIXI.sound.play('highNotes');
+    //PIXI.sound.play('highNotes');
 }
 
 function onDragEnd()
@@ -205,13 +209,13 @@ function onDragEnd()
     if(validMove(this)){
         createPileTile(movedTileX,movedTileY);
         this.interactive = false;
+        //This should increase and update score
+        incrementScore(this);
+        drawScore();
     }
     else {
         this.position.set(movedTileX,movedTileY);
     }
-    //This should increase and update score
-    incrementScore(this);
-    drawScore();
 }
 
 function onDragMove()
@@ -242,10 +246,15 @@ function roundPosition(x,y){
     return [roundedX, roundedY];
 }
 function boxesCollide(a,b){
-    return a.x + a.width > b.x && a.x < b.x + b.width && a.y + a.height > b.y && a.y < b.y + b.height;
+    let ax = a.getGlobalPosition().x;
+    let ay = a.getGlobalPosition().y;
+    let bx = b.getGlobalPosition().x;
+    let by = b.getGlobalPosition().y;
+    
+    return ax + a.width > bx && ax < bx + b.width && ay + a.height > by && ay < by + b.height;
 }
 function outOfBounds(a){
-    return ((a.x < 0 || a.x > 320) || //these are the max and min x values for the board (0 is the visual left, 320 is the visual right) 
+    return ((a.x < 0 || a.x > 320) || //these are the max and min x values for the board (27 is the visual left, 351 is the visual right) 
         (a.y > -64 || a.y < -512)); //these are the max and min y values for the board (-512 is the visual top of the board, -64 is the visual bottom)
 }
 
