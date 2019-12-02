@@ -61,8 +61,9 @@ loader
 
 //let a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,blank;
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
-let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0]
-let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0]
+let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
+let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0];
+let playedWords = [];
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
 let pileSize = 5;
@@ -92,12 +93,6 @@ function setup() {
             } 
             let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2 + tileSize,false);
             board.addChild(newTile);
-            console.log("Initial Tile: ");
-            console.log(newTile.tileName);
-            console.log(newTile.x);
-            console.log(newTile.y);
-            console.log(newTile.getGlobalPosition().x);
-            console.log(newTile.getGlobalPosition().y);
         }
     }
     app.stage.addChild(board);
@@ -223,7 +218,6 @@ function onDragEnd()
             let newTile = createTile(this.tileName, this.getGlobalPosition().x, this.getGlobalPosition().y, false); 
             board.addChild(newTile);
 
-
             incrementScore(this);
             drawScore();        
         }
@@ -240,9 +234,64 @@ function onDragMove()
         this.position.set(newRounded[0],newRounded[1]);
     }
 }
-
+function inRow(a, b) {
+    let ax = a.getGlobalPosition().x;
+    let bx = b.getGlobalPosition().x;
+    return ax + a.width > bx && ax < bx + b.width;
+}
+function inColumn(a, b) {
+    let ay = a.getGlobalPosition().y;
+    let by = b.getGlobalPosition().y;
+    return ay + a.height > by && ay < by + b.height;
+}
 function incrementScore(a){//should be a more particular score determination based upon words made in the future
-    score += letters.indexOf(a.tileName);
+    //check rows and columns
+    let row = [];
+    let rowWord = "";
+    let column = [];
+    let colWord = "";
+    for (const b of board.children) {
+        if (inRow(a, b)) {
+            row.push(b.tileName);
+        } else if (inColumn(a, b)) {
+            column.push(b.tileName);
+        }
+    }
+    for (var i = 0; i < row.length; i++) {
+        //add the next letter or break up the word
+        if (row[i] == "_blank" || row[i] == "_wall") {
+            rowWord == "";
+        } else {
+            rowWord += row[i];
+            //if rowWord in dictionary and not in playedWords
+            if (!playedWords.includes(rowWord)) {
+                playedWords.push(rowWord);
+                for (var j = 0; j < rowWord.length - 1; j++) {
+                    score += scores[letters.indexOf(rowWord[j])];
+                }
+            }
+        }
+    }
+    for (var i = 0; i < column.length; i++) {
+        //add the next letter or break up the word
+        if (column[i] == "_blank" || column[i] == "_wall") {
+            colWord == "";
+        } else {
+            colWord += column[i];
+            //if colWord in dictionary and not in playedWords
+            if (!playedWords.includes(colWord)) {
+                playedWords.push(colWord);
+                for (var j = 0; j < colWord.length - 1; j++) {
+                    score += scores[letters.indexOf(colWord[j])];
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    
 }
 
 function roundPosition(x,y){
@@ -252,14 +301,11 @@ function roundPosition(x,y){
 
     return [roundedX, roundedY];
 }
-function boxesCollide(a,b){
-    let ax = a.getGlobalPosition().x;
-    let ay = a.getGlobalPosition().y;
-    let bx = b.getGlobalPosition().x;
-    let by = b.getGlobalPosition().y;
 
-    return ax + a.width > bx && ax < bx + b.width && ay + a.height > by && ay < by + b.height;
+function boxesCollide(a, b){
+    return inRow(a, b) && inColumn(a, b);
 }
+
 function outOfBounds(a){
     let ax = a.getGlobalPosition().x;
     let ay = a.getGlobalPosition().y;
@@ -271,10 +317,8 @@ function validMove(a, b){
     //if (outOfBounds(a)) return false;
     if (boxesCollide(a, b)){
         if (a.tileName == "_blank"){
-            console.log("blank a");
             return (b.tileName != "_blank" && b.tileName != "_wall");
         } else {
-            console.log("nonblank a");
             return (b.tileName == "_blank");
         }
     }
