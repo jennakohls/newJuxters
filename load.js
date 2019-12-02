@@ -14,7 +14,7 @@ let app = new Application({
     antialias: true,    // default: false
     transparent: false, // default: false
     resolution: 1,       // default: 1
-    backgroundColor: 0xFF00FF // default: 0x000000
+    backgroundColor: 0xCCE5F7 // default: 0x000000
   }
 );
 
@@ -117,8 +117,8 @@ function setup() {
 
 function drawScore(){
 var graphics = new PIXI.Graphics();
-graphics.beginFill(0x000000);
-graphics.lineStyle(5, 0xFF00FF);
+graphics.beginFill(0x74779F);
+graphics.lineStyle(5, 0xCCE5F7);
 graphics.drawRect(0,0,8 * tileSize,tileSize);
 app.stage.addChild(graphics);
 
