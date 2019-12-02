@@ -70,6 +70,8 @@ let boardSize = 7; //square but it gets cut off! :D
 let tileSize = 54;
 let leftBorder = tileSize / 2;
 let rightBorder = (boardSize * tileSize) + leftBorder;
+let upBorder = leftBorder + tileSize;
+let downBorder = rightBorder + tileSize;
 let score = 0;
 let tileChance = .8;
 let movedTileX = 0;
@@ -91,6 +93,7 @@ function setup() {
             let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2 + tileSize,false);
             board.addChild(newTile);
             console.log("Initial Tile: ");
+            console.log(newTile.tileName);
             console.log(newTile.x);
             console.log(newTile.y);
             console.log(newTile.getGlobalPosition().x);
@@ -205,17 +208,27 @@ function onDragEnd()
 
     // set the interaction data to null
     this.data = null;
-    
-    if(validMove(this)){
-        createPileTile(movedTileX,movedTileY);
-        this.interactive = false;
-        //This should increase and update score
-        incrementScore(this);
-        drawScore();
+
+    let valid = false
+    for(var b of board.children){
+        if(validMove(this, b)){
+            valid = true
+            createPileTile(movedTileX,movedTileY);
+
+            //Access tile in location and change its tileName to the new tile
+            this.interactive = false;
+            board.removeChild(b);
+            //This is a super weird way to put the tile into the board structure, but it was the only way I could make it work
+            //Trying to just have board.addChild(this) was giving me some super weird errors - Owen
+            let newTile = createTile(this.tileName, this.getGlobalPosition().x, this.getGlobalPosition().y, false); 
+            board.addChild(newTile);
+
+
+            incrementScore(this);
+            drawScore();        
+        }
     }
-    else {
-        this.position.set(movedTileX,movedTileY);
-    }
+    if (!valid) this.position.set(movedTileX,movedTileY);
 }
 
 function onDragMove()
@@ -234,15 +247,9 @@ function incrementScore(a){//should be a more particular score determination bas
 
 function roundPosition(x,y){
     //lol this doesn't work quite yet but... one day. it rounds, just doesn't bounce off the edge like i'd like
-    let amt = tileSize;
-    let roundedX = Math.round(x/amt)*amt;
-    let roundedY = Math.round(y/amt)*amt;
-//    if(app.view.width - roundedX <= amt) {
-//        roundedX -= amt;
-//    }
-//    if(app.view.height - roundedY <= amt) {
-//        roundedY -= amt;
-//    }
+    let roundedX = Math.round(x/tileSize)*tileSize;
+    let roundedY = Math.round(y/tileSize)*tileSize;
+
     return [roundedX, roundedY];
 }
 function boxesCollide(a,b){
@@ -250,18 +257,26 @@ function boxesCollide(a,b){
     let ay = a.getGlobalPosition().y;
     let bx = b.getGlobalPosition().x;
     let by = b.getGlobalPosition().y;
-    
+
     return ax + a.width > bx && ax < bx + b.width && ay + a.height > by && ay < by + b.height;
 }
 function outOfBounds(a){
-    return ((a.x < 0 || a.x > 320) || //these are the max and min x values for the board (27 is the visual left, 351 is the visual right) 
-        (a.y > -64 || a.y < -512)); //these are the max and min y values for the board (-512 is the visual top of the board, -64 is the visual bottom)
+    let ax = a.getGlobalPosition().x;
+    let ay = a.getGlobalPosition().y;
+    
+    return ((ax < leftBorder || ax > rightBorder) || (ay > upBorder || ay < downBorder));
 }
 
-function validMove(a){ //um okay don't look too hard at this. for some reason it's backwards what i thought. idk. 
-    if (outOfBounds(a)) return false;
-    for(const element of board.children){
-        if(boxesCollide(a,element)) return false;
+function validMove(a, b){  
+    //if (outOfBounds(a)) return false;
+    if (boxesCollide(a, b)){
+        if (a.tileName == "_blank"){
+            console.log("blank a");
+            return (b.tileName != "_blank" && b.tileName != "_wall");
+        } else {
+            console.log("nonblank a");
+            return (b.tileName == "_blank");
+        }
     }
-    return true;
+    return false;
 }
