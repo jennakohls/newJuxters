@@ -14,7 +14,7 @@ let app = new Application({
     antialias: true,    // default: false
     transparent: false, // default: false
     resolution: 1,       // default: 1
-    backgroundColor: 0xFF00FF // default: 0x000000
+    backgroundColor: 0xCCE5F7 // default: 0x000000
   }
 );
 
@@ -29,25 +29,37 @@ window.addEventListener("load", function(event){
 //Add pixi canvas to html document
 document.body.appendChild(app.view);
 
-//PIXI.sound.Sound.from({
-//    url: 'rss/sound/juxtersBounce2.ogg',
-//    autoPlay: true,
-//    loop: true,
-//    complete: function() {
-//        console.log('Sound finished');
-//    }
-//});
+PIXI.sound.Sound.from({
+    url: 'rss/sound/juxtersBounce2.ogg',
+    autoPlay: true,
+    loop: true,
+    complete: function() {
+        console.log('Sound finished');
+    }
+});
 
 // List of files to load
-//const manifest = {
-//    full: 'rss/sound/JuxtersBounce2.ogg',
-//    highNotes: 'rss/sound/JuxtersBounce1.ogg'
-//};
+const manifest = {
+    full: 'rss/sound/JuxtersBounce2.ogg',
+    highNotes: 'rss/sound/JuxtersBounce1.ogg',
+    aNote: 'rss/sound/aNote.ogg',
+    bNote: 'rss/sound/bNote.ogg',
+    cNote: 'rss/sound/cNote.ogg',
+    dNote: 'rss/sound/dNote.ogg',
+    eNote: 'rss/sound/eNote.ogg',
+    fNote: 'rss/sound/fNote.ogg',
+    gNote: 'rss/sound/gNote.ogg',
+    c5Note: 'rss/sound/c5Note.gg'
+};
+
+let noteIndex = 0;
+let notesArray = ['aNote','bNote','cNote','dNote','eNote','fNote','gNote'];
+let songArray = ['aNote']; //take that out, i just want to make sure it's initialized
 
 // Add
-//for (let name in manifest) {
-//    PIXI.Loader.shared.add(name, manifest[name]);
-//}
+for (let name in manifest) {
+    PIXI.Loader.shared.add(name, manifest[name]);
+}
 
 //PIXI.sound.play('full',{
 //    autoPlay: true,
@@ -99,6 +111,19 @@ function setup() {
             board.addChild(newTile);
         }
     }
+
+    var background = PIXI.Sprite.fromImage('rss/background.png');
+ 
+    // center the sprite anchor point
+    background.anchor.x = 0;
+    background.anchor.y = 0;
+     
+     
+    background.position.x = 0;
+    background.position.y = 0;
+    app.stage.addChild(background);
+
+
     app.stage.addChild(board);
     
     //make pile
@@ -119,8 +144,8 @@ function setup() {
 
 function drawScore(){
 var graphics = new PIXI.Graphics();
-graphics.beginFill(0x000000);
-graphics.lineStyle(5, 0xFF00FF);
+graphics.beginFill(0x74779F);
+graphics.lineStyle(5, 0xCCE5F7);
 graphics.drawRect(0,0,8 * tileSize,tileSize);
 app.stage.addChild(graphics);
 
@@ -196,7 +221,10 @@ function onDragStart(event)
     this.dragging = true;
     movedTileX = this.x;
     movedTileY = this.y;
-    //PIXI.sound.play('highNotes');
+    
+    PIXI.sound.play(notesArray[noteIndex]);
+    songArray.push(notesArray[noteIndex]);
+    noteIndex = (noteIndex + 1) % 6;
 }
 
 function onDragEnd()
@@ -226,6 +254,7 @@ function onDragEnd()
             drawScore();        
         }
     }
+
     if (!valid) this.position.set(movedTileX,movedTileY);
 }
 
