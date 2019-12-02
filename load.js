@@ -76,8 +76,8 @@ let score = 0;
 let tileChance = .8;
 let movedTileX = 0;
 let movedTileY = 0;
-dictionary = {}
-dictArr = dict.split('\n').sort(function(a,b) {return a.length - b.length;});
+dictionary = {};
+dictArr = dict.split('\n');
 for (var i = 0; i < dictArr.length; i++) {
     dictionary[dictArr[i]] = true;
 }
