@@ -38,6 +38,8 @@ PIXI.sound.Sound.from({
     }
 });
 
+
+
 // List of files to load
 const manifest = {
     full: 'rss/sound/JuxtersBounce2.ogg',
@@ -49,11 +51,13 @@ const manifest = {
     eNote: 'rss/sound/eNote.ogg',
     fNote: 'rss/sound/fNote.ogg',
     gNote: 'rss/sound/gNote.ogg',
-    c5Note: 'rss/sound/c5Note.gg'
+    c5Note: 'rss/sound/c5Note.ogg'
 };
 
+
+
 let noteIndex = 0;
-let notesArray = ['aNote','bNote','cNote','dNote','eNote','fNote','gNote'];
+let notesArray = ['aNote','bNote','cNote','c5Note','dNote','eNote','fNote','gNote'];
 let songArray = ['aNote']; //take that out, i just want to make sure it's initialized
 
 // Add
@@ -61,6 +65,8 @@ for (let name in manifest) {
     PIXI.Loader.shared.add(name, manifest[name]);
 }
 
+
+const bgmLength = 96; //this is not great to hardcode lol
 //PIXI.sound.play('full',{
 //    autoPlay: true,
 //    loop: true
@@ -252,6 +258,10 @@ function onDragEnd()
     }
 
     if (!valid) this.position.set(movedTileX,movedTileY);
+    
+    for(const note of songArray){
+        PIXI.sound.play(note, {start: 1});
+    }
 }
 
 function onDragMove()
