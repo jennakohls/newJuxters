@@ -59,7 +59,6 @@ loader
   .add("rss/tileset.json")
   .load(setup);
 
-//let a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,blank;
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
 let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
 let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0];
@@ -77,6 +76,11 @@ let score = 0;
 let tileChance = .8;
 let movedTileX = 0;
 let movedTileY = 0;
+dictionary = {}
+dictArr = dict.split('\n').sort(function(a,b) {return a.length - b.length;});
+for (var i = 0; i < dictArr.length; i++) {
+    dictionary[dictArr[i]] = true;
+}
 
 //This `setup` function will run when the image has loaded
 function setup() { 
@@ -264,7 +268,7 @@ function incrementScore(a){//should be a more particular score determination bas
         } else {
             rowWord += row[i];
             //if rowWord in dictionary and not in playedWords
-            if (!playedWords.includes(rowWord)) {
+            if (!playedWords.includes(rowWord) && dictionary[rowWord]) {
                 playedWords.push(rowWord);
                 for (var j = 0; j < rowWord.length - 1; j++) {
                     score += scores[letters.indexOf(rowWord[j])];
@@ -279,7 +283,7 @@ function incrementScore(a){//should be a more particular score determination bas
         } else {
             colWord += column[i];
             //if colWord in dictionary and not in playedWords
-            if (!playedWords.includes(colWord)) {
+            if (!playedWords.includes(colWord) && dictionary[colWord]) {
                 playedWords.push(colWord);
                 for (var j = 0; j < colWord.length - 1; j++) {
                     score += scores[letters.indexOf(colWord[j])];
