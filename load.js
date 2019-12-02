@@ -49,7 +49,7 @@ const manifest = {
     eNote: 'rss/sound/eNote.ogg',
     fNote: 'rss/sound/fNote.ogg',
     gNote: 'rss/sound/gNote.ogg',
-    c5Note: 'rss/sound/c5Note.gg'
+    c5Note: 'rss/sound/c5Note.ogg'
 };
 
 let noteIndex = 0;
@@ -286,10 +286,13 @@ function incrementScore(a){//should be a more particular score determination bas
     for (const b of board.children) {
         if (inRow(a, b)) {
             row.push(b.tileName);
-        } else if (inColumn(a, b)) {
+        } 
+        if (inColumn(a, b)) {
             column.push(b.tileName);
         }
     }
+    console.log(row);
+    console.log(column);
     for (var i = 0; i < row.length; i++) {
         //add the next letter or break up the word
         if (row[i] == "_blank" || row[i] == "_wall") {
@@ -299,8 +302,11 @@ function incrementScore(a){//should be a more particular score determination bas
             //if rowWord in dictionary and not in playedWords
             if (!playedWords.includes(rowWord) && dictionary[rowWord]) {
                 playedWords.push(rowWord);
+                console.log(rowWord);
                 for (var j = 0; j < rowWord.length - 1; j++) {
                     score += scores[letters.indexOf(rowWord[j])];
+                    console.log(rowWord[j]);
+                    console.log(scores[letters.indexOf(rowWord[j])]);
                 }
             }
         }
@@ -314,6 +320,7 @@ function incrementScore(a){//should be a more particular score determination bas
             //if colWord in dictionary and not in playedWords
             if (!playedWords.includes(colWord) && dictionary[colWord]) {
                 playedWords.push(colWord);
+                console.log(colWord);
                 for (var j = 0; j < colWord.length - 1; j++) {
                     score += scores[letters.indexOf(colWord[j])];
                 }
