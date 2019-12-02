@@ -14,7 +14,7 @@ let app = new Application({
     antialias: true,    // default: false
     transparent: false, // default: false
     resolution: 1,       // default: 1
-    backgroundColor: 0xFF00FF // default: 0x000000
+    backgroundColor: 0xCCE5F7 // default: 0x000000
   }
 );
 
@@ -29,14 +29,14 @@ window.addEventListener("load", function(event){
 //Add pixi canvas to html document
 document.body.appendChild(app.view);
 
-PIXI.sound.Sound.from({
-    url: 'rss/sound/juxtersBounce2.ogg',
-    autoPlay: true,
-    loop: true,
-    complete: function() {
-        console.log('Sound finished');
-    }
-});
+//PIXI.sound.Sound.from({
+//    url: 'rss/sound/juxtersBounce2.ogg',
+//    autoPlay: true,
+//    loop: true,
+//    complete: function() {
+//        console.log('Sound finished');
+//    }
+//});
 
 // List of files to load
 const manifest = {
@@ -57,14 +57,15 @@ let notesArray = ['aNote','bNote','cNote','dNote','eNote','fNote','gNote'];
 let songArray = ['aNote']; //take that out, i just want to make sure it's initialized
 
 // Add
-for (let name in manifest) {
-    PIXI.Loader.shared.add(name, manifest[name]);
-}
+//for (let name in manifest) {
+//    PIXI.Loader.shared.add(name, manifest[name]);
+//}
 
 //PIXI.sound.play('full',{
 //    autoPlay: true,
 //    loop: true
 //})
+
 //load an image and run the `setup` function when it's done
 loader
   .add("rss/tileset.json")
@@ -72,11 +73,18 @@ loader
 
 //let a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,blank;
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
-let pileSize = 5;
-let boardSize = 7; //square but it gets cut off! :D
+let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
+let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0];
+let playedWords = [];
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
+let pileSize = 5;
+let boardSize = 7; //square but it gets cut off! :D
 let tileSize = 54;
+let leftBorder = tileSize / 2;
+let rightBorder = (boardSize * tileSize) + leftBorder;
+let upBorder = leftBorder + tileSize;
+let downBorder = rightBorder + tileSize;
 let score = 0;
 let tileChance = .8;
 let movedTileX = 0;
@@ -97,11 +105,21 @@ function setup() {
             } 
             let newTile = createTile(tileName,(i * tileSize) + tileSize/2,(j * tileSize) + tileSize/2 + tileSize,false);
             board.addChild(newTile);
-            console.log("Initial Tile: ");
-            console.log(newTile.x);
-            console.log(newTile.y);
         }
     }
+
+    var background = PIXI.Sprite.fromImage('rss/background.png');
+ 
+    // center the sprite anchor point
+    background.anchor.x = 0;
+    background.anchor.y = 0;
+     
+     
+    background.position.x = 0;
+    background.position.y = 0;
+    app.stage.addChild(background);
+
+
     app.stage.addChild(board);
     
     //make pile
@@ -122,8 +140,8 @@ function setup() {
 
 function drawScore(){
 var graphics = new PIXI.Graphics();
-graphics.beginFill(0x000000);
-graphics.lineStyle(5, 0xFF00FF);
+graphics.beginFill(0x74779F);
+graphics.lineStyle(5, 0xCCE5F7);
 graphics.drawRect(0,0,8 * tileSize,tileSize);
 app.stage.addChild(graphics);
 
@@ -199,12 +217,10 @@ function onDragStart(event)
     this.dragging = true;
     movedTileX = this.x;
     movedTileY = this.y;
-    //PIXI.sound.play('highNotes');
     
     PIXI.sound.play(notesArray[noteIndex]);
     songArray.push(notesArray[noteIndex]);
     noteIndex = (noteIndex + 1) % 6;
-    
 }
 
 function onDragEnd()
@@ -215,21 +231,27 @@ function onDragEnd()
 
     // set the interaction data to null
     this.data = null;
-    
-    if(validMove(this)){
-        createPileTile(movedTileX,movedTileY);
-        this.interactive = false;
+
+    let valid = false
+    for(var b of board.children){
+        if(validMove(this, b)){
+            valid = true
+            createPileTile(movedTileX,movedTileY);
+
+            //Access tile in location and change its tileName to the new tile
+            this.interactive = false;
+            board.removeChild(b);
+            //This is a super weird way to put the tile into the board structure, but it was the only way I could make it work
+            //Trying to just have board.addChild(this) was giving me some super weird errors - Owen
+            let newTile = createTile(this.tileName, this.getGlobalPosition().x, this.getGlobalPosition().y, false); 
+            board.addChild(newTile);
+
+            incrementScore(this);
+            drawScore();        
+        }
     }
-    else {
-        this.position.set(movedTileX,movedTileY);
-    }
-    //This should increase and update score
-    incrementScore(this);
-    drawScore();
-    
-    for(const note of songArray){
-        PIXI.sound.play(note, {start: 1});
-    }
+
+    if (!valid) this.position.set(movedTileX,movedTileY);
 }
 
 function onDragMove()
@@ -241,36 +263,93 @@ function onDragMove()
         this.position.set(newRounded[0],newRounded[1]);
     }
 }
-
+function inRow(a, b) {
+    let ax = a.getGlobalPosition().x;
+    let bx = b.getGlobalPosition().x;
+    return ax + a.width > bx && ax < bx + b.width;
+}
+function inColumn(a, b) {
+    let ay = a.getGlobalPosition().y;
+    let by = b.getGlobalPosition().y;
+    return ay + a.height > by && ay < by + b.height;
+}
 function incrementScore(a){//should be a more particular score determination based upon words made in the future
-    score += letters.indexOf(a.tileName);
+    //check rows and columns
+    let row = [];
+    let rowWord = "";
+    let column = [];
+    let colWord = "";
+    for (const b of board.children) {
+        if (inRow(a, b)) {
+            row.push(b.tileName);
+        } else if (inColumn(a, b)) {
+            column.push(b.tileName);
+        }
+    }
+    for (var i = 0; i < row.length; i++) {
+        //add the next letter or break up the word
+        if (row[i] == "_blank" || row[i] == "_wall") {
+            rowWord == "";
+        } else {
+            rowWord += row[i];
+            //if rowWord in dictionary and not in playedWords
+            if (!playedWords.includes(rowWord)) {
+                playedWords.push(rowWord);
+                for (var j = 0; j < rowWord.length - 1; j++) {
+                    score += scores[letters.indexOf(rowWord[j])];
+                }
+            }
+        }
+    }
+    for (var i = 0; i < column.length; i++) {
+        //add the next letter or break up the word
+        if (column[i] == "_blank" || column[i] == "_wall") {
+            colWord == "";
+        } else {
+            colWord += column[i];
+            //if colWord in dictionary and not in playedWords
+            if (!playedWords.includes(colWord)) {
+                playedWords.push(colWord);
+                for (var j = 0; j < colWord.length - 1; j++) {
+                    score += scores[letters.indexOf(colWord[j])];
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    
 }
 
 function roundPosition(x,y){
     //lol this doesn't work quite yet but... one day. it rounds, just doesn't bounce off the edge like i'd like
-    let amt = tileSize;
-    let roundedX = Math.round(x/amt)*amt;
-    let roundedY = Math.round(y/amt)*amt;
-//    if(app.view.width - roundedX <= amt) {
-//        roundedX -= amt;
-//    }
-//    if(app.view.height - roundedY <= amt) {
-//        roundedY -= amt;
-//    }
+    let roundedX = Math.round(x/tileSize)*tileSize;
+    let roundedY = Math.round(y/tileSize)*tileSize;
+
     return [roundedX, roundedY];
 }
-function boxesCollide(a,b){
-    return a.x + a.width > b.x && a.x < b.x + b.width && a.y + a.height > b.y && a.y < b.y + b.height;
-}
-function outOfBounds(a){
-    return ((a.x < 0 || a.x > 320) || //these are the max and min x values for the board (0 is the visual left, 320 is the visual right) 
-        (a.y > -64 || a.y < -512)); //these are the max and min y values for the board (-512 is the visual top of the board, -64 is the visual bottom)
+
+function boxesCollide(a, b){
+    return inRow(a, b) && inColumn(a, b);
 }
 
-function validMove(a){ //um okay don't look too hard at this. for some reason it's backwards what i thought. idk. 
-    if (outOfBounds(a)) return false;
-    for(const element of board.children){
-        if(boxesCollide(a,element)) return false;
+function outOfBounds(a){
+    let ax = a.getGlobalPosition().x;
+    let ay = a.getGlobalPosition().y;
+    
+    return ((ax < leftBorder || ax > rightBorder) || (ay > upBorder || ay < downBorder));
+}
+
+function validMove(a, b){  
+    //if (outOfBounds(a)) return false;
+    if (boxesCollide(a, b)){
+        if (a.tileName == "_blank"){
+            return (b.tileName != "_blank" && b.tileName != "_wall");
+        } else {
+            return (b.tileName == "_blank");
+        }
     }
-    return true;
+    return false;
 }
