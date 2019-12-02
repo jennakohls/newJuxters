@@ -29,14 +29,14 @@ window.addEventListener("load", function(event){
 //Add pixi canvas to html document
 document.body.appendChild(app.view);
 
-//PIXI.sound.Sound.from({
-//    url: 'rss/sound/juxtersBounce2.ogg',
-//    autoPlay: true,
-//    loop: true,
-//    complete: function() {
-//        console.log('Sound finished');
-//    }
-//});
+PIXI.sound.Sound.from({
+    url: 'rss/sound/juxtersBounce2.ogg',
+    autoPlay: true,
+    loop: true,
+    complete: function() {
+        console.log('Sound finished');
+    }
+});
 
 // List of files to load
 const manifest = {
