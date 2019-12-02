@@ -45,9 +45,9 @@ document.body.appendChild(app.view);
 //};
 
 // Add
-for (let name in manifest) {
-    PIXI.Loader.shared.add(name, manifest[name]);
-}
+//for (let name in manifest) {
+//    PIXI.Loader.shared.add(name, manifest[name]);
+//}
 
 //PIXI.sound.play('full',{
 //    autoPlay: true,
