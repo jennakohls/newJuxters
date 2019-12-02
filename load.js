@@ -41,8 +41,20 @@ PIXI.sound.Sound.from({
 // List of files to load
 const manifest = {
     full: 'rss/sound/JuxtersBounce2.ogg',
-    highNotes: 'rss/sound/JuxtersBounce1.ogg'
+    highNotes: 'rss/sound/JuxtersBounce1.ogg',
+    aNote: 'rss/sound/aNote.ogg',
+    bNote: 'rss/sound/bNote.ogg',
+    cNote: 'rss/sound/cNote.ogg',
+    dNote: 'rss/sound/dNote.ogg',
+    eNote: 'rss/sound/eNote.ogg',
+    fNote: 'rss/sound/fNote.ogg',
+    gNote: 'rss/sound/gNote.ogg',
+    c5Note: 'rss/sound/c5Note.gg'
 };
+
+let noteIndex = 0;
+let notesArray = ['aNote','bNote','cNote','dNote','eNote','fNote','gNote'];
+let songArray = ['aNote']; //take that out, i just want to make sure it's initialized
 
 // Add
 for (let name in manifest) {
@@ -187,7 +199,12 @@ function onDragStart(event)
     this.dragging = true;
     movedTileX = this.x;
     movedTileY = this.y;
-    PIXI.sound.play('highNotes');
+    //PIXI.sound.play('highNotes');
+    
+    PIXI.sound.play(notesArray[noteIndex]);
+    songArray.push(notesArray[noteIndex]);
+    noteIndex = (noteIndex + 1) % 6;
+    
 }
 
 function onDragEnd()
@@ -209,6 +226,10 @@ function onDragEnd()
     //This should increase and update score
     incrementScore(this);
     drawScore();
+    
+    for(const note of songArray){
+        PIXI.sound.play(note, {start: 1});
+    }
 }
 
 function onDragMove()
