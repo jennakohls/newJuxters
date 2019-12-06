@@ -242,13 +242,31 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
 	"sourceSize": {"w":64,"h":64},
 	"anchor": {"x":0.5,"y":0.5}
+},
+"_.png": 
+{
+	"frame": {"x":1728,"y":0,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64},
+	"anchor": {"x":0.5,"y":0.5}
+},
+"_wall.png":
+{
+	"frame": {"x":1792,"y":0,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64},
+	"anchor": {"x":0.5,"y":0.5}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "tileset.png",
 	"format": "RGBA8888",
-	"size": {"w":1728,"h":64},
+	"size": {"w":1856,"h":64},
 	"scale": "1",
 	"smartupdate": "$TexturePacker:SmartUpdate:682372fd79d09f07c889c5711dff7091:cea7f588007445be7e32d37f916dcc4d:ace0e5e82375743ccde85e973fd84fb5$"
 }
