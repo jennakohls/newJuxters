@@ -29,55 +29,49 @@ window.addEventListener("load", function(event){
 //Add pixi canvas to html document
 document.body.appendChild(app.view);
 
-PIXI.sound.Sound.from({
-    url: 'rss/sound/juxtersBounce2.ogg',
-    autoPlay: true,
-    loop: true,
-    complete: function() {
-        console.log('Sound finished');
-    }
-});
-
-
-
 // List of files to load
 const manifest = {
     full: 'rss/sound/JuxtersBounce2.ogg',
     highNotes: 'rss/sound/JuxtersBounce1.ogg',
-    aNote: 'rss/sound/aNote.ogg',
-    bNote: 'rss/sound/bNote.ogg',
-    cNote: 'rss/sound/cNote.ogg',
-    dNote: 'rss/sound/dNote.ogg',
-    eNote: 'rss/sound/eNote.ogg',
-    fNote: 'rss/sound/fNote.ogg',
-    gNote: 'rss/sound/gNote.ogg',
-    c5Note: 'rss/sound/c5Note.ogg'
+    c3: 'rss/sound/c3.ogg',
+    d3: 'rss/sound/d3.ogg',
+    e3: 'rss/sound/e3.ogg',
+    f3: 'rss/sound/f3.ogg',
+    g3: 'rss/sound/g3.ogg',
+    a3: 'rss/sound/a3.ogg',
+    b3: 'rss/sound/b3.ogg',
+    c4: 'rss/sound/c4.ogg',
+    d4: 'rss/sound/d4.ogg',
+    e4: 'rss/sound/e4.ogg',
+    f4: 'rss/sound/f4.ogg',
+    g4: 'rss/sound/g4.ogg',
+    a4: 'rss/sound/a4.ogg',
+    b4: 'rss/sound/b4.ogg',
+    c5: 'rss/sound/c5.ogg',
+    d5: 'rss/sound/d5.ogg',
+    e5: 'rss/sound/e5.ogg',
+    f5: 'rss/sound/f5.ogg',
+    g5: 'rss/sound/g5.ogg',
+    a5: 'rss/sound/a5.ogg',
+    b5: 'rss/sound/b5.ogg',
+    c6: 'rss/sound/c6.ogg',
 };
 
-
-
-let noteIndex = 0;
-let notesArray = ['aNote','bNote','cNote','c5Note','dNote','eNote','fNote','gNote'];
-let songArray = ['aNote']; //take that out, i just want to make sure it's initialized
+let notesArray = ['c3','d3','e3','f3','g3','a3','b3','c4','d4','e4','f4','g4','a4','b4','c5','d5','e5','f5','g5','a5','b5','c6','c4','d4','e4','f4','g4','a4','b4']; 
 
 // Add
 for (let name in manifest) {
     PIXI.Loader.shared.add(name, manifest[name]);
 }
 
-
-const bgmLength = 96; //this is not great to hardcode lol
-//PIXI.sound.play('full',{
-//    autoPlay: true,
-//    loop: true
-//})
+const bgmLength = 96; 
 
 //load an image and run the `setup` function when it's done
 loader
   .add("rss/tileset.json")
   .load(setup);
 
-let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
+let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_','_wall'];
 let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
 let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0];
 let playedWords = [];
@@ -146,6 +140,21 @@ function setup() {
     //make score
     drawScore();
     
+    //set volumes of different octaves
+    for (let note of notesArray){
+        if(notesArray.indexOf(note) < 7){ //c3 to b3
+            PIXI.sound.volume(note, 3);
+        } else if(notesArray.indexOf(note) < 14){ //c4 to b4
+            PIXI.sound.volume(note, 2);
+        } else if(notesArray.indexOf(note) < 21){ //c5 to b5
+            PIXI.sound.volume(note, 3);
+        } else if(notesArray.indexOf(note) == 21){ //c6 only
+            PIXI.sound.volume(note, 4);
+        }
+        //console.log(note + 'volume: '  + PIXI.sound.volume(note));
+    }
+    
+    loopFunction();
 }
 
 function drawScore(){
@@ -156,16 +165,17 @@ graphics.drawRect(0,0,8 * tileSize,tileSize);
 app.stage.addChild(graphics);
 
 let style = new PIXI.TextStyle({
-  //fontFamily: "BlinkMacSystemFont", //this probably won't work on mobile. 
-  fontSize: 24,
-  fill: "white",
-});
-    
-    let message = new PIXI.Text("Score: " + score.toString(), style);
-
-    message.position.set((app.view.width/2) - 48, 24);
-    
-    app.stage.addChild(message);
+    //fontFamily: "BlinkMacSystemFont", //this probably won't work on mobile. 
+    fontFamily: "Gotham-Medium",
+    fontSize: 48,
+    fill: "white" //"#262262",
+  });
+      
+      let message = new PIXI.Text(score.toString(), style);
+  
+      message.position.set((app.view.width/2) - 20, 2);
+      
+      app.stage.addChild(message);
   
 }
 
@@ -228,9 +238,14 @@ function onDragStart(event)
     movedTileX = this.x;
     movedTileY = this.y;
     
-    PIXI.sound.play(notesArray[noteIndex]);
-    songArray.push(notesArray[noteIndex]);
-    noteIndex = (noteIndex + 1) % 6;
+    let thisNote = notesArray[letters.indexOf(this.tileName)];
+    PIXI.sound.play(thisNote);
+    
+    console.log(this.tileName + ' ' + thisNote + ' volume: ' + PIXI.sound.volume(thisNote));
+    
+//    let offset = bgmInstance.progress * bgmLength;
+//    console.log('offset: ' + offset);
+    
 }
 
 function onDragEnd()
@@ -250,11 +265,13 @@ function onDragEnd()
 
             //Access tile in location and change its tileName to the new tile
             this.interactive = false;
+            let idx = board.getChildIndex(b);
+            console.log(" Current index being replaced ", idx);
             board.removeChild(b);
             //This is a super weird way to put the tile into the board structure, but it was the only way I could make it work
             //Trying to just have board.addChild(this) was giving me some super weird errors - Owen
             let newTile = createTile(this.tileName, this.getGlobalPosition().x, this.getGlobalPosition().y, false); 
-            board.addChild(newTile);
+            board.addChildAt(newTile, idx);
 
             incrementScore(this);
             drawScore();        
@@ -263,9 +280,6 @@ function onDragEnd()
 
     if (!valid) this.position.set(movedTileX,movedTileY);
     
-    for(const note of songArray){
-        PIXI.sound.play(note, {start: 1});
-    }
 }
 
 function onDragMove()
@@ -310,9 +324,10 @@ function incrementScore(a){//should be a more particular score determination bas
         } else {
             rowWord += row[i];
             //if rowWord in dictionary and not in playedWords
-            if (!playedWords.includes(rowWord) && dictionary[rowWord]) {
+            if (!playedWords.includes(rowWord) && (dictionary[rowWord]|| dictionary[findBlankword(rowWord)])) { 
                 playedWords.push(rowWord);
                 console.log(rowWord);
+                saveWordSong(rowWord);
                 for (var j = 0; j < rowWord.length - 1; j++) {
                     score += scores[letters.indexOf(rowWord[j])];
                     console.log(rowWord[j]);
@@ -328,9 +343,10 @@ function incrementScore(a){//should be a more particular score determination bas
         } else {
             colWord += column[i];
             //if colWord in dictionary and not in playedWords
-            if (!playedWords.includes(colWord) && dictionary[colWord]) {
+            if (!playedWords.includes(colWord) && (dictionary[colWord] || dictionary[findBlankword(colWord)])) {
                 playedWords.push(colWord);
                 console.log(colWord);
+                saveWordSong(colWord);
                 for (var j = 0; j < colWord.length - 1; j++) {
                     score += scores[letters.indexOf(colWord[j])];
                 }
@@ -338,10 +354,35 @@ function incrementScore(a){//should be a more particular score determination bas
         }
     }
     
+}
+
+function saveWordSong(word) {
+    let newPhrase = [];
     
+    for (let letter of word){
+        let thisNote = notesArray[letters.indexOf(letter)];
+        newPhrase.push(thisNote);
+        console.log('put: ' + thisNote + 'in newPhrase');
+        }
     
+    phraseArray.push(newPhrase);
+    console.log('put: ' + newPhrase + 'in phraseArray');
     
-    
+    let offset = bgmInstance.progress * bgmLength;
+    console.log('offset: ' + offset);
+    phraseArrayOffets.push(offset);
+}
+
+function findBlankword(blankword) {
+    const letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+    const idx = blankword.indexOf("_");
+    for (var i = 0; i < letters.length; i++) {
+        let word = blankword.replace("_", letters[i]);
+        if (dictionary[word]) {
+            return word;
+        }
+    }
+    return "zzzz";
 }
 
 function roundPosition(x,y){
@@ -366,11 +407,52 @@ function outOfBounds(a){
 function validMove(a, b){  
     //if (outOfBounds(a)) return false;
     if (boxesCollide(a, b)){
-        if (a.tileName == "_blank"){
-            return (b.tileName != "_blank" && b.tileName != "_wall");
+        if (a.tileName == "_"){ //Pile blank
+            //return (b.tileName != "_blank" && b.tileName != "_wall");
+            return (b.tileName == "_blank");
         } else {
             return (b.tileName == "_blank");
         }
     }
     return false;
+}
+
+var phraseArrayTest = [['c5', 'c4'], ['a3', 'b3'], ['d3','f3','a4']]; 
+var phraseArray = [];
+var phraseArrayOffets = [];
+
+var bgmInstance;
+
+function loopFunction() {
+    if(phraseArray.length > 0) { phraseLoop(0, phraseArray.length - 1); }
+    
+    bgmInstance = PIXI.sound.play('full',{
+        autoPlay:true,
+        volume: 0.8,
+        complete:loopFunction
+    });
+    
+}
+
+function phraseLoop(i, n) {
+    let phraseLength = phraseArray[i].length;
+    let phraseOffset = phraseArrayOffets[i] * 1000;
+    //let phraseOffset = 0;
+    noteLoop(0, phraseLength - 1, i);
+    console.log('looped: ' + i);
+    if (i < n) {
+        setTimeout(function() {
+            phraseLoop(i+1, n);
+        }, phraseLength * 1000 + phraseOffset);
+    }
+};
+
+function noteLoop(i, n, whichPhrase){
+    let noteLength = 0.9;//i think this makes more sense then letting the full 2 seconds play
+    PIXI.sound.play(phraseArray[whichPhrase][i]);
+    if (i < n) {
+        setTimeout(function() {
+            noteLoop(i+1, n, whichPhrase);
+        }, noteLength * 1000);
+    } 
 }
