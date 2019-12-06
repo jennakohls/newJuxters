@@ -44,26 +44,43 @@ PIXI.sound.Sound.from({
 const manifest = {
     full: 'rss/sound/JuxtersBounce2.ogg',
     highNotes: 'rss/sound/JuxtersBounce1.ogg',
-    aNote: 'rss/sound/aNote.ogg',
-    bNote: 'rss/sound/bNote.ogg',
-    cNote: 'rss/sound/cNote.ogg',
-    dNote: 'rss/sound/dNote.ogg',
-    eNote: 'rss/sound/eNote.ogg',
-    fNote: 'rss/sound/fNote.ogg',
-    gNote: 'rss/sound/gNote.ogg',
-    c5Note: 'rss/sound/c5Note.ogg'
+    c3: 'rss/sound/c3.ogg',
+    d3: 'rss/sound/d3.ogg',
+    e3: 'rss/sound/e3.ogg',
+    f3: 'rss/sound/f3.ogg',
+    g3: 'rss/sound/g3.ogg',
+    a3: 'rss/sound/a3.ogg',
+    b3: 'rss/sound/b3.ogg',
+    c4: 'rss/sound/c4.ogg',
+    d4: 'rss/sound/d4.ogg',
+    e4: 'rss/sound/e4.ogg',
+    f4: 'rss/sound/f4.ogg',
+    g4: 'rss/sound/g4.ogg',
+    a4: 'rss/sound/a4.ogg',
+    b4: 'rss/sound/b4.ogg',
+    c5: 'rss/sound/c5.ogg',
+    d5: 'rss/sound/d5.ogg',
+    e5: 'rss/sound/e5.ogg',
+    f5: 'rss/sound/f5.ogg',
+    g5: 'rss/sound/g5.ogg',
+    a5: 'rss/sound/a5.ogg',
+    b5: 'rss/sound/b5.ogg',
+    c6: 'rss/sound/c6.ogg',
 };
 
 
 
 let noteIndex = 0;
-let notesArray = ['aNote','bNote','cNote','c5Note','dNote','eNote','fNote','gNote'];
+let notesArray = ['c3','d3','e3','f3','g3','a3','b3','c4','d4','e4','f4','g4','a4','b4','c5','d5','e5','f5','g5','a5','b5','c6','c4','d4','e4','f4','g4','a4','b4']; //this is longer than it needs to be but should ensure i don't accidentally index out of bounds
+
+
 let songArray = ['aNote']; //take that out, i just want to make sure it's initialized
 
 // Add
 for (let name in manifest) {
     PIXI.Loader.shared.add(name, manifest[name]);
 }
+
 
 
 const bgmLength = 96; //this is not great to hardcode lol
@@ -76,6 +93,9 @@ const bgmLength = 96; //this is not great to hardcode lol
 loader
   .add("rss/tileset.json")
   .load(setup);
+
+
+
 
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
 let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
@@ -146,6 +166,19 @@ function setup() {
     //make score
     drawScore();
     
+    //set volumes of different octaves
+    for (let note of notesArray){
+        if(notesArray.indexOf(note) < 7){ //c3 to b3
+            PIXI.sound.volume(note, 3);
+        } else if(notesArray.indexOf(note) < 14){ //c4 to b4
+            PIXI.sound.volume(note, 2);
+        } else if(notesArray.indexOf(note) < 21){ //c5 to b5
+            PIXI.sound.volume(note, 3);
+        } else if(notesArray.indexOf(note) == 21){ //c6 only
+            PIXI.sound.volume(note, 4);
+        }
+        //console.log(note + 'volume: '  + PIXI.sound.volume(note));
+    }
 }
 
 function drawScore(){
@@ -228,9 +261,12 @@ function onDragStart(event)
     movedTileX = this.x;
     movedTileY = this.y;
     
-    PIXI.sound.play(notesArray[noteIndex]);
     songArray.push(notesArray[noteIndex]);
     noteIndex = (noteIndex + 1) % 6;
+    
+    let thisNote = notesArray[letters.indexOf(this.tileName)];
+    PIXI.sound.play(thisNote);
+    console.log(this.tileName + ' ' + thisNote + ' volume: ' + PIXI.sound.volume(thisNote));
 }
 
 function onDragEnd()
@@ -263,9 +299,9 @@ function onDragEnd()
 
     if (!valid) this.position.set(movedTileX,movedTileY);
     
-    for(const note of songArray){
-        PIXI.sound.play(note, {start: 1});
-    }
+//    for(const note of songArray){
+//        PIXI.sound.play(note, {start: 1});
+//    }
 }
 
 function onDragMove()
@@ -337,10 +373,6 @@ function incrementScore(a){//should be a more particular score determination bas
             }
         }
     }
-    
-    
-    
-    
     
 }
 
