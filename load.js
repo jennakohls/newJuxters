@@ -427,7 +427,7 @@ function phraseLoop(i, n) {
     if (i < n) {
         setTimeout(function() {
             phraseLoop(i+1, n);
-        }, phraseLength * 1000);
+        }, phraseLength * 1000 + phraseOffset);
     }
 };
 
