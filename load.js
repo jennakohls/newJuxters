@@ -320,7 +320,7 @@ function incrementScore(a){//should be a more particular score determination bas
     for (var i = 0; i < row.length; i++) {
         //add the next letter or break up the word
         if (row[i] == "_blank" || row[i] == "_wall") {
-            rowWord == "";
+            rowWord = "";
         } else {
             rowWord += row[i];
             //if rowWord in dictionary and not in playedWords
@@ -339,7 +339,7 @@ function incrementScore(a){//should be a more particular score determination bas
     for (var i = 0; i < column.length; i++) {
         //add the next letter or break up the word
         if (column[i] == "_blank" || column[i] == "_wall") {
-            colWord == "";
+            colWord = "";
         } else {
             colWord += column[i];
             //if colWord in dictionary and not in playedWords
@@ -371,7 +371,7 @@ function saveWordSong(word) {
     let offset = bgmInstance.progress * bgmLength;
     console.log('offset: ' + offset);
     phraseArrayOffets.push(offset);
-}
+} 
 
 function findBlankword(blankword) {
     const letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
