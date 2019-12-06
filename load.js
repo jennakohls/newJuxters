@@ -44,26 +44,43 @@ PIXI.sound.Sound.from({
 const manifest = {
     full: 'rss/sound/JuxtersBounce2.ogg',
     highNotes: 'rss/sound/JuxtersBounce1.ogg',
-    aNote: 'rss/sound/aNote.ogg',
-    bNote: 'rss/sound/bNote.ogg',
-    cNote: 'rss/sound/cNote.ogg',
-    dNote: 'rss/sound/dNote.ogg',
-    eNote: 'rss/sound/eNote.ogg',
-    fNote: 'rss/sound/fNote.ogg',
-    gNote: 'rss/sound/gNote.ogg',
-    c5Note: 'rss/sound/c5Note.ogg'
+    c3: 'rss/sound/c3.ogg',
+    d3: 'rss/sound/d3.ogg',
+    e3: 'rss/sound/e3.ogg',
+    f3: 'rss/sound/f3.ogg',
+    g3: 'rss/sound/g3.ogg',
+    a3: 'rss/sound/a3.ogg',
+    b3: 'rss/sound/b3.ogg',
+    c4: 'rss/sound/c4.ogg',
+    d4: 'rss/sound/d4.ogg',
+    e4: 'rss/sound/e4.ogg',
+    f4: 'rss/sound/f4.ogg',
+    g4: 'rss/sound/g4.ogg',
+    a4: 'rss/sound/a4.ogg',
+    b4: 'rss/sound/b4.ogg',
+    c5: 'rss/sound/c5.ogg',
+    d5: 'rss/sound/d5.ogg',
+    e5: 'rss/sound/e5.ogg',
+    f5: 'rss/sound/f5.ogg',
+    g5: 'rss/sound/g5.ogg',
+    a5: 'rss/sound/a5.ogg',
+    b5: 'rss/sound/b5.ogg',
+    c6: 'rss/sound/c6.ogg',
 };
 
 
 
 let noteIndex = 0;
-let notesArray = ['aNote','bNote','cNote','c5Note','dNote','eNote','fNote','gNote'];
+let notesArray = ['c3','d3','e3','f3','g3','a3','b3','c4','d4','e4','f4','g4','a4','b4','c5','d5','e5','f5','g5','a5','b5','c6','c4','d4','e4','f4','g4','a4','b4']; //this is longer than it needs to be but should ensure i don't accidentally index out of bounds
+
+
 let songArray = ['aNote']; //take that out, i just want to make sure it's initialized
 
 // Add
 for (let name in manifest) {
     PIXI.Loader.shared.add(name, manifest[name]);
 }
+
 
 
 const bgmLength = 96; //this is not great to hardcode lol
@@ -77,7 +94,10 @@ loader
   .add("rss/tileset.json")
   .load(setup);
 
-let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_','_wall'];
+
+
+
+let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
 let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
 let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0];
 let playedWords = [];
@@ -105,7 +125,7 @@ function setup() {
     //make board
     for(let i = 0; i < boardSize; i++){
         for(let j = 0; j < boardSize; j++){
-            let tileName = "_blank";
+            let tileName = "_blank"
             //Random wall placement
             if (i == 1 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || 
                 i == boardSize - 2 && j == boardSize - 2 || i == boardSize - 3 && j == boardSize - 2 || 
@@ -146,6 +166,19 @@ function setup() {
     //make score
     drawScore();
     
+    //set volumes of different octaves
+    for (let note of notesArray){
+        if(notesArray.indexOf(note) < 7){ //c3 to b3
+            PIXI.sound.volume(note, 3);
+        } else if(notesArray.indexOf(note) < 14){ //c4 to b4
+            PIXI.sound.volume(note, 2);
+        } else if(notesArray.indexOf(note) < 21){ //c5 to b5
+            PIXI.sound.volume(note, 3);
+        } else if(notesArray.indexOf(note) == 21){ //c6 only
+            PIXI.sound.volume(note, 4);
+        }
+        //console.log(note + 'volume: '  + PIXI.sound.volume(note));
+    }
 }
 
 function drawScore(){
@@ -153,18 +186,17 @@ var graphics = new PIXI.Graphics();
 graphics.beginFill(0x74779F);
 graphics.lineStyle(5, 0xCCE5F7);
 graphics.drawRect(0,0,8 * tileSize,tileSize);
-app.stage.addChild(graphics); 
+app.stage.addChild(graphics);
 
 let style = new PIXI.TextStyle({
   //fontFamily: "BlinkMacSystemFont", //this probably won't work on mobile. 
-  fontFamily: "Gotham-Medium",
-  fontSize: 48,
-  fill: "#262262",
+  fontSize: 24,
+  fill: "white",
 });
     
-    let message = new PIXI.Text(score.toString(), style);
+    let message = new PIXI.Text("Score: " + score.toString(), style);
 
-    message.position.set((app.view.width/2) - 20, 2);
+    message.position.set((app.view.width/2) - 48, 24);
     
     app.stage.addChild(message);
   
@@ -229,9 +261,12 @@ function onDragStart(event)
     movedTileX = this.x;
     movedTileY = this.y;
     
-    PIXI.sound.play(notesArray[noteIndex]);
     songArray.push(notesArray[noteIndex]);
     noteIndex = (noteIndex + 1) % 6;
+    
+    let thisNote = notesArray[letters.indexOf(this.tileName)];
+    PIXI.sound.play(thisNote);
+    console.log(this.tileName + ' ' + thisNote + ' volume: ' + PIXI.sound.volume(thisNote));
 }
 
 function onDragEnd()
@@ -251,13 +286,11 @@ function onDragEnd()
 
             //Access tile in location and change its tileName to the new tile
             this.interactive = false;
-            let idx = board.getChildIndex(b);
-            console.log(" Current index being replaced ", idx);
             board.removeChild(b);
             //This is a super weird way to put the tile into the board structure, but it was the only way I could make it work
             //Trying to just have board.addChild(this) was giving me some super weird errors - Owen
             let newTile = createTile(this.tileName, this.getGlobalPosition().x, this.getGlobalPosition().y, false); 
-            board.addChildAt(newTile, idx);
+            board.addChild(newTile);
 
             incrementScore(this);
             drawScore();        
@@ -266,9 +299,9 @@ function onDragEnd()
 
     if (!valid) this.position.set(movedTileX,movedTileY);
     
-    for(const note of songArray){
-        PIXI.sound.play(note, {start: 1});
-    }
+//    for(const note of songArray){
+//        PIXI.sound.play(note, {start: 1});
+//    }
 }
 
 function onDragMove()
@@ -296,10 +329,7 @@ function incrementScore(a){//should be a more particular score determination bas
     let rowWord = "";
     let column = [];
     let colWord = "";
-    let idx = 0;
     for (const b of board.children) {
-        console.log("i = " + idx + ' Value = ', b.tileName );
-        idx++;
         if (inRow(a, b)) {
             row.push(b.tileName);
         } 
@@ -307,21 +337,21 @@ function incrementScore(a){//should be a more particular score determination bas
             column.push(b.tileName);
         }
     }
-    console.log('Before Row = ' , row);
-    console.log('Before Column = ', column);
+    console.log(row);
+    console.log(column);
     for (var i = 0; i < row.length; i++) {
         //add the next letter or break up the word
         if (row[i] == "_blank" || row[i] == "_wall") {
-            rowWord = "";
-        } else {  
-            rowWord += row[i]; 
+            rowWord == "";
+        } else {
+            rowWord += row[i];
             //if rowWord in dictionary and not in playedWords
-            if (!playedWords.includes(rowWord) && (dictionary[rowWord]|| dictionary[findBlankword(rowWord)])) {
+            if (!playedWords.includes(rowWord) && dictionary[rowWord]) {
                 playedWords.push(rowWord);
-                console.log('Row Word = ', rowWord);
+                console.log(rowWord);
                 for (var j = 0; j < rowWord.length - 1; j++) {
                     score += scores[letters.indexOf(rowWord[j])];
-                    console.log('Row Word = ', rowWord[j]);
+                    console.log(rowWord[j]);
                     console.log(scores[letters.indexOf(rowWord[j])]);
                 }
             }
@@ -330,31 +360,20 @@ function incrementScore(a){//should be a more particular score determination bas
     for (var i = 0; i < column.length; i++) {
         //add the next letter or break up the word
         if (column[i] == "_blank" || column[i] == "_wall") {
-            colWord = "";
-        } else { 
-            colWord += column[i]; 
+            colWord == "";
+        } else {
+            colWord += column[i];
             //if colWord in dictionary and not in playedWords
-            if (!playedWords.includes(colWord) && (dictionary[colWord] || dictionary[findBlankword(colWord)])) {
+            if (!playedWords.includes(colWord) && dictionary[colWord]) {
                 playedWords.push(colWord);
-                console.log('Col Word = ', colWord);
+                console.log(colWord);
                 for (var j = 0; j < colWord.length - 1; j++) {
                     score += scores[letters.indexOf(colWord[j])];
                 }
             }
         }
-    }  
-}
-
-function findBlankword(blankword) {
-    const letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
-    const idx = blankword.indexOf("_");
-    for (var i = 0; i < letters.length; i++) {
-        let word = blankword.replace("_", letters[i]);
-        if (dictionary[word]) {
-            return word;
-        }
     }
-    return "zzzz";
+    
 }
 
 function roundPosition(x,y){
@@ -379,9 +398,8 @@ function outOfBounds(a){
 function validMove(a, b){  
     //if (outOfBounds(a)) return false;
     if (boxesCollide(a, b)){
-        if (a.tileName == "_"){ //Pile blank
-            //return (b.tileName != "_blank" && b.tileName != "_wall");
-            return (b.tileName == "_blank");
+        if (a.tileName == "_blank"){
+            return (b.tileName != "_blank" && b.tileName != "_wall");
         } else {
             return (b.tileName == "_blank");
         }
