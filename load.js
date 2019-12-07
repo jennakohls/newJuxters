@@ -1,4 +1,4 @@
-//Aliases
+//Aliases  
 let Application = PIXI.Application,
     Container = PIXI.Container,
     loader = PIXI.Loader.shared,
@@ -17,7 +17,7 @@ let app = new Application({
     backgroundColor: 0xCCE5F7 // default: 0x000000
   }
 );
-
+let wordBoardIdx = []; 
 //This has been checked and does not cause crashing
 window.addEventListener("load", function(event){ 
         scale = scaleToWindow(app.renderer.view);
@@ -68,7 +68,7 @@ const bgmLength = 96;
 
 //load an image and run the `setup` function when it's done
 loader
-  .add("rss/tileset.json")
+  .add("rss/tileset.json") 
   .load(setup);
 
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_','_wall'];
@@ -144,7 +144,7 @@ function setup() {
     app.stage.addChild(pile);
     
     //make score
-    drawScore();
+    drawScore(); 
     
     //set volumes of different octaves
     for (let note of notesArray){
@@ -302,7 +302,16 @@ function onDragEnd()
             drawScore();        
         }
     }
-
+    if (wordBoardIdx.length > 0) {
+        let filter = new PIXI.filters.GlowFilter(15, 2, 1, 0xFF0000, 0.5);
+        for (let i = 0; i < wordBoardIdx.length; i ++) { 
+            if (wordBoardIdx[i].filters == null) { 
+                wordBoardIdx[i].filters = [
+                    filter
+                ];
+            }
+        } 
+    }
     if (!valid) this.position.set(movedTileX,movedTileY);
     
 }
@@ -332,11 +341,17 @@ function incrementScore(a){//should be a more particular score determination bas
     let rowWord = "";
     let column = [];
     let colWord = "";
+    let rowIdx = [];
+    let colIdx = [];
+    let rowWordIdx = [];
+    let colWordIdx = [];
     for (const b of board.children) {
         if (inRow(a, b)) {
+            rowIdx.push(b);
             row.push(b.tileName);
         } 
         if (inColumn(a, b)) {
+            colIdx.push(b);
             column.push(b.tileName);
         }
     }
@@ -346,15 +361,20 @@ function incrementScore(a){//should be a more particular score determination bas
             rowWord = "";
         } else {
             rowWord += row[i];
+            rowWordIdx.push(rowIdx[i]);
             //if rowWord or any subword of rowWord in dictionary and not in playedWords
             for (let i = 0; i < rowWord.length; i++) {
                 subRowWord = rowWord.slice(i,rowWord.length);
                 if (!playedWords.includes(subRowWord) && (dictionary[subRowWord]|| dictionary[findBlankword(subRowWord)])) { 
                     playedWords.push(subRowWord);
+                    for (let b1 = i; b1 < rowWord.length; b1++) { 
+                        wordBoardIdx.push(rowWordIdx[b1]); //Push all the letters that need to be changed
+                    }
                     saveWordSong(subRowWord);
                     for (var j = 0; j <= subRowWord.length - 1; j++) {
                         score += scores[letters.indexOf(subRowWord[j])];
                     }
+                   
                 }
             }
             
@@ -366,15 +386,19 @@ function incrementScore(a){//should be a more particular score determination bas
             colWord = "";
         } else {
             colWord += column[i];
+            colWordIdx.push(colIdx[i]);
             //if colWord or any subword of colWord in dictionary and not in playedWords
             for (let i = 0; i < colWord.length; i++) {
                 subcolWord = colWord.slice(i,colWord.length);
                 if (!playedWords.includes(subcolWord) && (dictionary[subcolWord]|| dictionary[findBlankword(subcolWord)])) { 
                     playedWords.push(subcolWord);
+                    for (let b1 = i; b1 < colWord.length; b1++) { 
+                        wordBoardIdx.push(colWordIdx[b1]); //Push all the letters that need to be changed
+                    }
                     saveWordSong(subcolWord);
                     for (var j = 0; j <= subcolWord.length - 1; j++) {
                         score += scores[letters.indexOf(subcolWord[j])];
-                    }
+                    } 
                 }
             }
         }
@@ -398,6 +422,18 @@ function saveWordSong(word) {
     console.log('offset: ' + offset);
     phraseArrayOffets.push(offset);
 } 
+
+function replaceTiles(wordIdxAry) {
+    for (let i = 0; i < wordIdxAry.length; i++) {
+        let b = wordIdxAry[i]; 
+        let idx = board.getChildIndex(b);
+        b.tileName = b.tileName.replace('_1', '');
+        let newTile = createTile(b.tileName + '_1', b.x, b.y, false);
+        console.log(" Current index being replaced "+  idx +  ' x= ' + b.getGlobalPosition().x + ' y= ' + b.getGlobalPosition().y);
+        board.removeChildAt(idx);
+        board.addChildAt(newTile, idx);   
+    } 
+}
 
 function findBlankword(blankword) {
     const letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
