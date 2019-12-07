@@ -36,7 +36,7 @@ window.addEventListener("load", function(event){
 
 //Add pixi canvas to html document
 document.body.appendChild(app.view);
-
+let notesArray = [];
 if (!(isSafari && isIOS)) {
     const manifest = {
         full: 'rss/sound/juxtersBounce2.ogg',
@@ -65,7 +65,7 @@ if (!(isSafari && isIOS)) {
         c6: 'rss/sound/c6.ogg',
     };
 
-    let notesArray = ['c3','d3','e3','f3','g3','a3','b3','c4','d4','e4','f4','g4','a4','b4','c5','d5','e5','f5','g5','a5','b5','c6','c4','d4','e4','f4','g4','a4','b4']; 
+    notesArray = ['c3','d3','e3','f3','g3','a3','b3','c4','d4','e4','f4','g4','a4','b4','c5','d5','e5','f5','g5','a5','b5','c6','c4','d4','e4','f4','g4','a4','b4']; 
 
     // Add
     for (let name in manifest) {
@@ -158,13 +158,13 @@ function setup() {
     
     //set volumes of different octaves
     for (let note of notesArray){
-        if(notesArray.indexOf(note) < 7 && !(isSafari && isIOS)){ //c3 to b3
+        if(notesArray.indexOf(note) < 7){ //c3 to b3
             PIXI.sound.volume(note, 3);
-        } else if(notesArray.indexOf(note) < 14 && !(isSafari && isIOS)){ //c4 to b4
+        } else if(notesArray.indexOf(note) < 14){ //c4 to b4
             PIXI.sound.volume(note, 2);
-        } else if(notesArray.indexOf(note) < 21 && !(isSafari && isIOS)){ //c5 to b5
+        } else if(notesArray.indexOf(note) < 21){ //c5 to b5
             PIXI.sound.volume(note, 3);
-        } else if(notesArray.indexOf(note) == 21 && !(isSafari && isIOS)){ //c6 only
+        } else if(notesArray.indexOf(note) == 21){ //c6 only
             PIXI.sound.volume(note, 4);
         }
         //console.log(note + 'volume: '  + PIXI.sound.volume(note));
