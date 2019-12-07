@@ -82,8 +82,9 @@ const bgmLength = 96;
 loader
   .add("rss/tileset.json") 
   .load(setup);
-
-let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
+//The tileset has a blank tile styled as _.png hence we need _ for blank tile for the pile
+//We are also replacing letters with _ to check for valid word (findBlankword)
+let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_','_wall'];
 let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
 let amounts = [3, 1, 1, 2, 4, 1, 1, 1, 3, 1, 1, 3, 1, 3, 2, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 2, 0];
 let sum = 0;
@@ -483,9 +484,9 @@ function outOfBounds(a){
 function validMove(a, b){  
     //if (outOfBounds(a)) return false;
     if (boxesCollide(a, b)){
-        if (a.tileName == "_blank"){ //Pile blank
-            return (b.tileName != "_blank" && b.tileName != "_wall");
-            //return (b.tileName == "_blank");
+        if (a.tileName == "_"){ //Pile blank
+            //return (b.tileName != "_blank" && b.tileName != "_wall");
+            return (b.tileName == "_blank");
         } else {
             return (b.tileName == "_blank");
         }
