@@ -71,7 +71,7 @@ loader
   .add("rss/tileset.json")
   .load(setup);
 
-let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
+let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_','_wall'];
 let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
 let amounts = [3, 1, 1, 2, 4, 1, 1, 1, 3, 1, 1, 3, 1, 3, 2, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 2, 0];
 let sum = 0;
@@ -184,13 +184,17 @@ let style = new PIXI.TextStyle({
       app.stage.addChild(message);
   
 }
+//https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
+function randomIntFromInterval(min, max) { // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
 
 function createPileTile(x,y){
     let tileName = "_None";
     while (tileName == "_None"){
         console.log("looping")
         //-2 to length so can't draw wall tile
-        let index = Math.round(Math.random() * (letters.length - 2));
+        let index = randomIntFromInterval(0,26); //we want blank _ to be included a thru z and _
         if (sum == 0) {
             return;
         }else if (remaining[index] != 0) {
@@ -348,7 +352,7 @@ function incrementScore(a){//should be a more particular score determination bas
                 if (!playedWords.includes(subRowWord) && (dictionary[subRowWord]|| dictionary[findBlankword(subRowWord)])) { 
                     playedWords.push(subRowWord);
                     saveWordSong(subRowWord);
-                    for (var j = 0; j < subRowWord.length - 1; j++) {
+                    for (var j = 0; j <= subRowWord.length - 1; j++) {
                         score += scores[letters.indexOf(subRowWord[j])];
                     }
                 }
@@ -368,7 +372,7 @@ function incrementScore(a){//should be a more particular score determination bas
                 if (!playedWords.includes(subcolWord) && (dictionary[subcolWord]|| dictionary[findBlankword(subcolWord)])) { 
                     playedWords.push(subcolWord);
                     saveWordSong(subcolWord);
-                    for (var j = 0; j < subcolWord.length - 1; j++) {
+                    for (var j = 0; j <= subcolWord.length - 1; j++) {
                         score += scores[letters.indexOf(subcolWord[j])];
                     }
                 }
