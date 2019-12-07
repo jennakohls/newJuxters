@@ -73,8 +73,15 @@ loader
 
 let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
 let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
-let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0];
-let remaining = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0];
+let amounts = [3, 1, 1, 2, 4, 1, 1, 1, 3, 1, 1, 3, 1, 3, 2, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 2, 0];
+let sum = 0;
+for (let i = 0; i < amounts.length; i++) {
+    console.log(letters[i] + "  :  " + amounts[i]);
+    sum += amounts[i];
+}
+console.log("amounts" + sum);
+//need 48 total letters
+let remaining = [3, 1, 1, 2, 4, 1, 1, 1, 3, 1, 1, 3, 1, 3, 2, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 2, 0];
 let playedWords = [];
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
@@ -184,8 +191,11 @@ function createPileTile(x,y){
         console.log("looping")
         //-2 to length so can't draw wall tile
         let index = Math.round(Math.random() * (letters.length - 2));
-        if (remaining[index] != 0) {
+        if (sum == 0) {
+            return;
+        }else if (remaining[index] != 0) {
             remaining[index] -= 1;
+            sum -= 1;
             tileName = letters[index];
             console.log("remaining:" + remaining[index]);
         }
@@ -418,9 +428,9 @@ function outOfBounds(a){
 function validMove(a, b){  
     //if (outOfBounds(a)) return false;
     if (boxesCollide(a, b)){
-        if (a.tileName == "_"){ //Pile blank
-            //return (b.tileName != "_blank" && b.tileName != "_wall");
-            return (b.tileName == "_blank");
+        if (a.tileName == "_blank"){ //Pile blank
+            return (b.tileName != "_blank" && b.tileName != "_wall");
+            //return (b.tileName == "_blank");
         } else {
             return (b.tileName == "_blank");
         }
