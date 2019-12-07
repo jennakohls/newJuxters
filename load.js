@@ -31,8 +31,8 @@ document.body.appendChild(app.view);
 
 // List of files to load
 const manifest = {
-    full: 'rss/sound/JuxtersBounce2.ogg',
-    highNotes: 'rss/sound/JuxtersBounce1.ogg',
+    full: 'rss/sound/juxtersBounce2.ogg',
+    highNotes: 'rss/sound/juxtersBounce1.ogg',
     c3: 'rss/sound/c3.ogg',
     d3: 'rss/sound/d3.ogg',
     e3: 'rss/sound/e3.ogg',
