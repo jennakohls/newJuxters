@@ -336,25 +336,24 @@ function incrementScore(a){//should be a more particular score determination bas
             column.push(b.tileName);
         }
     }
-    console.log(row);
-    console.log(column);
     for (var i = 0; i < row.length; i++) {
         //add the next letter or break up the word
         if (row[i] == "_blank" || row[i] == "_wall") {
             rowWord = "";
         } else {
             rowWord += row[i];
-            //if rowWord in dictionary and not in playedWords
-            if (!playedWords.includes(rowWord) && (dictionary[rowWord]|| dictionary[findBlankword(rowWord)])) { 
-                playedWords.push(rowWord);
-                console.log(rowWord);
-                saveWordSong(rowWord);
-                for (var j = 0; j < rowWord.length - 1; j++) {
-                    score += scores[letters.indexOf(rowWord[j])];
-                    console.log(rowWord[j]);
-                    console.log(scores[letters.indexOf(rowWord[j])]);
+            //if rowWord or any subword of rowWord in dictionary and not in playedWords
+            for (let i = 0; i < rowWord.length; i++) {
+                subRowWord = rowWord.slice(i,rowWord.length);
+                if (!playedWords.includes(subRowWord) && (dictionary[subRowWord]|| dictionary[findBlankword(subRowWord)])) { 
+                    playedWords.push(subRowWord);
+                    saveWordSong(subRowWord);
+                    for (var j = 0; j < subRowWord.length - 1; j++) {
+                        score += scores[letters.indexOf(subRowWord[j])];
+                    }
                 }
             }
+            
         }
     }
     for (var i = 0; i < column.length; i++) {
@@ -363,13 +362,15 @@ function incrementScore(a){//should be a more particular score determination bas
             colWord = "";
         } else {
             colWord += column[i];
-            //if colWord in dictionary and not in playedWords
-            if (!playedWords.includes(colWord) && (dictionary[colWord] || dictionary[findBlankword(colWord)])) {
-                playedWords.push(colWord);
-                console.log(colWord);
-                saveWordSong(colWord);
-                for (var j = 0; j < colWord.length - 1; j++) {
-                    score += scores[letters.indexOf(colWord[j])];
+            //if colWord or any subword of colWord in dictionary and not in playedWords
+            for (let i = 0; i < colWord.length; i++) {
+                subcolWord = colWord.slice(i,colWord.length);
+                if (!playedWords.includes(subcolWord) && (dictionary[subcolWord]|| dictionary[findBlankword(subcolWord)])) { 
+                    playedWords.push(subcolWord);
+                    saveWordSong(subcolWord);
+                    for (var j = 0; j < subcolWord.length - 1; j++) {
+                        score += scores[letters.indexOf(subcolWord[j])];
+                    }
                 }
             }
         }
