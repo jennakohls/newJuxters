@@ -71,9 +71,10 @@ loader
   .add("rss/tileset.json")
   .load(setup);
 
-let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_','_wall'];
+let letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_blank','_wall'];
 let scores = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10, 0, 0];
 let amounts = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0];
+let remaining = [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1, 2, 0];
 let playedWords = [];
 let pile = new PIXI.Container();
 let board = new PIXI.Container();
@@ -128,10 +129,8 @@ function setup() {
     
     //make pile
     for(let i = 0; i < pileSize; i++){
-        let tileName = letters[Math.round(Math.random() * (letters.length - 2))];
         let newPos = roundPosition((i * tileSize) + tileSize/2,tileSize/2);
-        let newTile = createTile(tileName,newPos[0],newPos[1],true); 
-        pile.addChild(newTile);
+        createPileTile(newPos[0], newPos[1]);
     }
     pile.position.set(tileSize/2, (tileSize/2) * 19);
     //pile.position.set(tileSize/2 + tileSize, (tileSize/2) * 19);
@@ -180,7 +179,19 @@ let style = new PIXI.TextStyle({
 }
 
 function createPileTile(x,y){
-    let tileName = letters[Math.round(Math.random() * (letters.length - 1))];
+    let tileName = "_None";
+    while (tileName == "_None"){
+        console.log("looping")
+        //-2 to length so can't draw wall tile
+        let index = Math.round(Math.random() * (letters.length - 2));
+        if (remaining[index] != 0) {
+            remaining[index] -= 1;
+            tileName = letters[index];
+            console.log("remaining:" + remaining[index]);
+        }
+    }
+    console.log(tileName);
+
     let newPos = roundPosition(x,y);
     let newTile = createTile(tileName,newPos[0],newPos[1],true); 
     pile.addChild(newTile);
