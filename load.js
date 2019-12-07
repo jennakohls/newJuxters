@@ -298,6 +298,7 @@ function onDragEnd()
     this.data = null;
 
     let valid = false
+    let filter = new PIXI.filters.GlowFilter(15, 2, 1, 0xFF0000, 0.5);
     for(var b of board.children){
         if(validMove(this, b)){
             valid = true
@@ -307,6 +308,11 @@ function onDragEnd()
             this.interactive = false;
             let idx = board.getChildIndex(b);
             console.log(" Current index being replaced ", idx);
+            if (b.filters == filter) { 
+                b.filters = [
+                    null
+                ];
+            }
             board.removeChild(b);
             //This is a super weird way to put the tile into the board structure, but it was the only way I could make it work
             //Trying to just have board.addChild(this) was giving me some super weird errors - Owen
