@@ -186,13 +186,13 @@ app.stage.addChild(graphics);
 let style = new PIXI.TextStyle({
     //fontFamily: "BlinkMacSystemFont", //this probably won't work on mobile. 
     fontFamily: "Gotham-Medium",
-    fontSize: 48,
+    fontSize: 36,
     fill: "white" //"#262262",
   });
       
       let message = new PIXI.Text(score.toString(), style);
   
-      message.position.set((app.view.width/2) - 20, 2);
+      message.position.set((app.view.width/2) - 20, 8);
       
       app.stage.addChild(message);
   
